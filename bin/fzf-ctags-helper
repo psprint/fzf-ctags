@@ -16,7 +16,7 @@ builtin read -d '' -r q
 p=$(cut -d$'\x7f' -f3 <<< $q)
 p=${p%%,*}
 e=$(cut -d$'\x7f' -f4 <<< $q)
-(( p -- ))
+(( p --, p=p-LINES/2+4, p=p<0?0:p ))
 
 # Preamble,
 printf "Showing \e[1;38;5;208m««\e[1;38;5;70m$e\e[0m:\e[1;38;5;33m$p\e[1;38;5;208m»»\e[0m\\n"
@@ -27,9 +27,7 @@ get_tags && pth=${REPLY%/TAGS} || pth=
 (
     [[ -n $pth ]] && builtin cd $pth
     if [[ -e $e ]]; then
-        sed -e 1,${p}d $e
-    elif [[ -n ${e##*/} ]]; then
-        sed -e 1,${p}d **/${e##*/}
+        colorize "$p" "$e"
     else
         printf "File $e not found\n"
     fi

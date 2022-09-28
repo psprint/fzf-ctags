@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+get_tags() {
+    local d pth
+
+    #PWD=`pwd`
+    pth=`pwd`
+    while true; do
+        [[ -e $pth/TAGS || -z ${pth%/} ]] && break
+        pth=${pth%/*}
+        d+=/..
+    done
+    [[ -n ${pth#/} ]] && REPLY="$pth"/TAGS
+
+    # Explicit!ly testable.
+    return $?
+}
+
+colorize() {
+    local line="$1" file="$2" lines="$(tput lines 2>/dev/null)"
+    local sed tool opts end
+
+    printf "$line $lines"
+    # Lines to show.
+    [[ -z $lines ]] && lines="$LINES"
+    [[ -z $lines ]] && lines=10
+    ((end=line+lines))
+
+    # Find sed binary to use.
+    if type sed &>/dev/null; then
+        sed=sed
+    elif type gsed &>/dev/null; then
+        sed-gsed
+    else
+        sed=cat
+    fi
+
+    # Find the tool to use. Prefer pygments for its speed.
+    if type pygmentize &>/dev/null; then
+        tool="$sed -e 1,${line}d $file | pygmentize -g | head -n $lines"
+        opts= file=
+    elif type pygmentize3 &>/dev/null; then
+        tool="$sed -e 1,${line}d $file | pygmentize3 -g | head -n $lines"
+        opts= file=
+    elif type source-highlight &>/dev/null; then
+         tool=source-highlight
+         opts="--line-range=$line-$end -f esc -o STDOUT -i"
+    fi
+    eval "$tool $opts $file"
+}
