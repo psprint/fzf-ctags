@@ -19,7 +19,6 @@ colorize() {
     local line="$1" file="$2" lines="$(tput lines 2>/dev/null)"
     local sed tool opts end
 
-    printf "$line $lines"
     # Lines to show.
     [[ -z $lines ]] && lines="$LINES"
     [[ -z $lines ]] && lines=10
@@ -44,6 +43,9 @@ colorize() {
     elif type source-highlight &>/dev/null; then
          tool=source-highlight
          opts="--line-range=$line-$end -f esc -o STDOUT -i"
+    else
+        tool="head -n $end $file | tail -n $lines"
+        opts= file=
     fi
     eval "$tool $opts $file"
 }
