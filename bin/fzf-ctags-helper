@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+# Set **/… globs.
+shopt -s globstar nullglob extglob
+
+# Load the library of shared functions.
+source "$FZF_CTAGS_LIB"
+
+# Prevent word split
+IFS=
+
+#  Read the line of input.
+builtin read -d '' -r q
+
+# Split the input.
+p=$(cut -d$'\x7f' -f3 <<< $q)
+p=${p%%,*}
+e=$(cut -d$'\x7f' -f4 <<< $q)
+(( p -- ))
+
+# Preamble,
+printf "Showing \e[1;38;5;208m««\e[1;38;5;70m$e\e[0m:\e[1;38;5;33m$p\e[1;38;5;208m»»\e[0m\\n"
+eval "printf '—%.0s' {1..$COLUMNS}"
+printf "\n"
+
+get_tags && pth=${REPLY%/TAGS} || pth=
+(
+    [[ -n $pth ]] && builtin cd $pth
+    if [[ -e $e ]]; then
+        sed -e 1,${p}d $e
+    elif [[ -n ${e##*/} ]]; then
+        sed -e 1,${p}d **/${e##*/}
+    else
+        printf "File $e not found\n"
+    fi
+)
+
+#less +${p%,*} **/"$e"
