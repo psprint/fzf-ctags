@@ -67,10 +67,11 @@ if (( ret != 0 )) || [[ -z $line ]]; then
     exit 1
 fi
 
-# Split into array.
-IFS=$'\x7f';
-arr=($line)
-nr=${arr[2]%%,*}
+# Split the input.
+q=$(cut -d$'\x7f' -f2 <<< $line)
+nr=$(cut -d$'\x7f' -f3 <<< $line)
+nr=${nr%%,*}
+e=$(cut -d$'\x7f' -f4 <<< $line)
 
 # Use the user's configured editor falling back to vim.
 ed="${VISUAL:-${EDITOR:-vim}}"
@@ -81,12 +82,12 @@ if ! type $ed &>/dev/null; then
 fi
 
 
-printf "\nPicked: \e[1;38;5;39m${arr[1]}\e[0m, opening: \
-\e[1;38;5;70m$ed\e[0m with the file: \e[1;38;5;140m${arr[3]}\e[0m:\e[38;5;208m$nr\e[0m\n"
+printf "\nPicked: \e[1;38;5;39m$q\e[0m, opening: \
+\e[1;38;5;70m$ed\e[0m with the file: \e[1;38;5;140m$e\e[0m:\e[38;5;208m$nr\e[0m\n"
 
 # Run editor on the selected file and line.
 # The one-time loop is to emphasize the final step.
 while 
-    ( cd "$tags_path"; command "$ed" +"$nr" **/"${arr[3]}"; )
+    ( cd "$tags_path"; command "$ed" +"$nr" "$e"; )
     false
 do true; done
