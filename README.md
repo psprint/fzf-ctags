@@ -7,6 +7,19 @@ Also, a preview window is available, showing the selected
 symbol's line in a center of the screen, with syntax highlighting
 (supporting `pygments` and `GNU Source-Highlight`).
 
+# Screenshots
+
+pygments:
+
+![screen1](https://raw.githubusercontent.com/psprint/fzf-ctags/img/img/screen1.png)
+
+pygments:
+
+![screen2](https://raw.githubusercontent.com/psprint/fzf-ctags/img/img/screen3.png)
+
+GNU Source Highlight.
+![screen3](https://raw.githubusercontent.com/psprint/fzf-ctags/img/img/screen4.png)
+
 # Installation
 
 After downloading the repo issue `make install` to have the
