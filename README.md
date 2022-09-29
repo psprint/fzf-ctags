@@ -32,3 +32,15 @@ zinit as"null" sbin'bin/*~*lib' for psprint/fzf-ctags
 ```
 
 Then, to open the interface, run `fzf-ctags`.
+
+# Generating Ctags index
+
+The index used is Emacs-style, `TAGS` file. To generate 
+this kind of index use `-e` option with `ctags` binary.
+The recommended ctags to use is
+[universal-ctags/ctags](https://github.com/universal-ctags/ctags).
+Example command to generate for `C` project could be:
+
+```zsh
+ctags -e -R --languages=C --langmap=C:.h.c --c-kinds=+px --extras=+r --extras=-{anonymous}
+```
